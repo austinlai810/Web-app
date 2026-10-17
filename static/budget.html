@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Budget Sheet</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="/" class="home-btn" aria-label="Home">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5 12 3l9 7.5"></path>
+        <path d="M5 10v10h14V10"></path>
+      </svg>
+    </a>
+    <span class="topbar-title">Budget Sheet</span>
+  </header>
+  <main class="budget-page">
+    <button id="add-row-btn" type="button">+ Add row</button>
+    <table class="budget-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Income</th>
+          <th>Expense</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="budget-rows"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">Totals</td>
+          <td id="total-income">0.00</td>
+          <td id="total-expense">0.00</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="2">Balance</td>
+          <td id="balance" colspan="2">0.00</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </main>
+  <script src="/static/budget.js"></script>
+</body>
+</html>

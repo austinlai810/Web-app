@@ -1,0 +1,175 @@
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+  height: 100vh;
+  background: #fff;
+  color: #222;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.home-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: #222;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.home-btn:hover {
+  background: #eee;
+}
+
+.topbar-title {
+  font-weight: 600;
+}
+
+.home-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.home-page h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.app-choices {
+  display: flex;
+  gap: 16px;
+}
+
+.app-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 120px;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: #222;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.app-choice:hover {
+  background: #e8e8e8;
+}
+
+.notes-layout {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.sidebar {
+  width: 250px;
+  background: #f4f4f4;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.note-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.note-item:hover {
+  background: #e8e8e8;
+}
+
+.note-item.active {
+  background: #d0e4ff;
+}
+
+.editor {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+#title-input {
+  font-size: 20px;
+  border: none;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+#content-input {
+  flex: 1;
+  border: none;
+  resize: none;
+  font-size: 16px;
+  padding: 5px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.budget-page {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+}
+
+#add-row-btn {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.budget-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.budget-table th,
+.budget-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.budget-table th {
+  background: #f4f4f4;
+}
+
+.budget-table input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  font: inherit;
+  padding: 4px;
+}
+
+.budget-table tfoot td {
+  font-weight: 600;
+  background: #fafafa;
+}
+
+.budget-table .delete-row-btn {
+  margin-top: 0;
+}
