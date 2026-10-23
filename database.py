@@ -14,9 +14,12 @@ class NoteDB(Base):
     content = Column(String)
 
 class BudgetItemDB(Base):
-    __tablename__ = "budget_items"
+    __tablename__ = "transactions"
     id = Column(Integer, primary_key=True, index=True)
-    category = Column(String, default="")
+    date = Column(Date)
     description = Column(String, default="")
-    income = Column(Float, default=0)
-    expense = Column(Float, default=0)
+    amount = Column(Float)
+    category = Column(String, default="")
+    subcategory = Column(String, default="")
+    direction = Column(String, default="")
+
