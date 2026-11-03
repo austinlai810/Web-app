@@ -141,23 +141,23 @@ button {
   margin-bottom: 12px;
 }
 
-.budget-table {
+.transactions-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.budget-table th,
-.budget-table td {
+.transactions-table th,
+.transactions-table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
 }
 
-.budget-table th {
+.transactions-table th {
   background: #f4f4f4;
 }
 
-.budget-table input {
+.transactions-table input {
   width: 100%;
   box-sizing: border-box;
   border: none;
@@ -165,11 +165,11 @@ button {
   padding: 4px;
 }
 
-.budget-table tfoot td {
+.transactions-table tfoot td {
   font-weight: 600;
   background: #fafafa;
 }
 
-.budget-table .delete-row-btn {
+.transactions-table .delete-row-btn {
   margin-top: 0;
 }

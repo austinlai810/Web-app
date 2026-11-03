@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Import Transactions</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="/" class="home-btn" aria-label="Home">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5 12 3l9 7.5"></path>
+        <path d="M5 10v10h14V10"></path>
+      </svg>
+    </a>
+    <span class="topbar-title">Import Transactions</span>
+  </header>
+  <main class="budget-page">
+    <datalist id="category-options"></datalist>
+    <datalist id="subcategory-options"></datalist>
+    <textarea id="csv-text" placeholder="Paste your CSV data here" rows="8"></textarea>
+    <button id="preview-btn" type="button">Preview</button>
+    <table class="transactions-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Direction</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+            </tr>
+        </thead>
+        <tbody id="preview-rows"></tbody>
+    </table>
+    <button id="confirm-btn" type="button">Import these rows</button>
+  </main>
+  <script src="/static/budget-import.js"></script>
+</body>
+</html>
