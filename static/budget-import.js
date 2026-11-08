@@ -29,6 +29,22 @@ function renderPreview() {
   });
 }
 
+let ignoredRows = [];
+
+function renderIgnored() {
+    const tbody = document.getElementById("ignored-rows");
+    tbody.innerHTML = "";
+    ignoredRows.forEach((row) => {
+        const tr = document.createElement("tr");
+        ["date", "description", "amount",].forEach((field) => {
+            const td = document.createElement("td");
+            td.textContent = row[field];
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+}
+
 document.getElementById("preview-btn").onclick = async () => {
     const text = document.getElementById("csv-text").value;
     const res = await fetch("/transactions/preview", {
@@ -36,9 +52,11 @@ document.getElementById("preview-btn").onclick = async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: text }),
     });
-    const rows = await res.json();
-    previewRows = rows;
+    const data = await res.json();
+    previewRows = data.rows;
+    ignoredRows = data.ignored;
     renderPreview();
+    renderIgnored();
   };
 
   async function loadCategories() {

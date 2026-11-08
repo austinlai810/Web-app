@@ -126,15 +126,23 @@ def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
 @app.post("/transactions/preview")
 def preview_transactions(request: ImportRequest, db: Session = Depends(get_db)):
     rows = []
+    ignored = []
     rules = {r.description: r for r in db.query(CategoryRuleDB).all()}
     for row in csv.DictReader(io.StringIO(request.text)):
         date_value = datetime.datetime.strptime(row["Transaction Date"], "%m/%d/%Y").date()
         amount = float(row["Amount"])
+        rule = rules.get(row["Description"])
+        if rule and rule.category.lower() == "ignore": 
+            ignored.append({
+                "date": date_value,
+                "description": row["Description"],
+                "amount": amount,            
+            })
+            continue
         if amount < 0:
             direction = "out"
         else:
             direction = "in"
-        rule = rules.get(row["Description"])
         if rule:
             category = rule.category
             subcategory = rule.subcategory
@@ -149,24 +157,45 @@ def preview_transactions(request: ImportRequest, db: Session = Depends(get_db)):
             "category": category,
             "subcategory": subcategory,
         })
-    return rows
+    return {"rows": rows, "ignored": ignored}
+
+
+# below is the import these rows button logic. The first if statement takes anything that doesn't have ignore and saves it. 
+# the second if statement updates CategoryRuleDB if I correct one and the else statement records it if its a new one. 
 
 @app.post("/transactions/confirm")
 def confirm_transactions(rows: list[Transaction], db: Session = Depends(get_db)):
     imported_at =datetime.datetime.now()
+    rules = {r.description: r for r in db.query(CategoryRuleDB).all()}
+    saved = 0
     for row in rows:
-        transaction = TransactionDB(
-            date=row.date,
-            description=row.description,
-            amount=row.amount,
-            direction=row.direction,
-            category=row.category,
-            subcategory=row.subcategory,
-            imported_at=imported_at,
-        )
-        db.add(transaction)
+        if row.category.lower() != "ignore":
+            transaction = TransactionDB(
+                date=row.date,
+                description=row.description,
+                amount=row.amount,
+                direction=row.direction,
+                category=row.category,
+                subcategory=row.subcategory,
+                imported_at=imported_at,
+            )
+            db.add(transaction)
+            saved += 1
+        if row.category:
+            rule = rules.get(row.description)
+            if rule: 
+                rule.category = row.category
+                rule.subcategory = row.subcategory
+            else:
+                new_rule = CategoryRuleDB(
+                    description= row.description, 
+                    category= row.category, 
+                    subcategory= row.subcategory
+                )
+                db.add(new_rule)
+                rules[row.description] = new_rule
     db.commit()
-    return {"imported": len(rows)}
+    return {"imported": saved}
 
 @app.get("/categories")
 def get_categories(db: Session = Depends(get_db)):
