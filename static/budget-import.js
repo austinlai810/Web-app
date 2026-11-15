@@ -1,4 +1,23 @@
 let previewRows = [];
+let ignoredRows = [];
+
+function rowKey(row) {
+    return `${row.date}|${row.description}|${row.amount}`;
+}
+
+function markDuplicates() {
+    const counts = {};  // creates the variable with an object input
+    previewRows.forEach((row) => {   
+        const key = rowKey(row);
+        counts[key] = (counts[key] || 0) +1;  // counts the amount already saved and adds 1. This helps is there is one later in the table
+    });
+    const trs = document.querySelectorAll("#preview-rows tr");
+    previewRows.forEach((row, i) => {   // i gives position?
+            const isDuplicate = counts[rowKey(row)] > 1 || (row.in_database && row.description === row.origionalDescription); 
+            // its a duplicate if there it counts more than 1 or the descriotions are the same 
+            trs[i].classList.toggle("duplicate", isDuplicate); //if its true is add the class "isDuplicate" to it
+    });
+}
 
 function renderPreview() {
   const tbody = document.getElementById("preview-rows");
@@ -20,6 +39,14 @@ function renderPreview() {
                 row[field] = input.value;
             }
             td.appendChild(input);
+        } else if (field === "description") {
+            const input = document.createElement("input"); // this makes it a text box
+            input.value = row[field];  //keeps current description
+            input.oninput = () => {
+                row[field] = input.value;    //adds typing into box
+                markDuplicates();       //rechecks for duplicates
+            };
+            td.appendChild(input);  //puts new text in table
         } else {
         td.textContent = row[field];
         }
@@ -27,9 +54,8 @@ function renderPreview() {
     }); 
     tbody.appendChild(tr);
   });
+  markDuplicates();
 }
-
-let ignoredRows = [];
 
 function renderIgnored() {
     const tbody = document.getElementById("ignored-rows");
@@ -45,6 +71,27 @@ function renderIgnored() {
     });
 }
 
+document.getElementById("confirm-btn").onclick = async () => {
+    if (previewRows.length == 0) { 
+        return;
+    }
+    const button = document.getElementById("confirm-btn")
+    button.disabled = true;
+    const res = await fetch("/transactions/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify(previewRows),
+    });
+    const result = await res.json();
+    alert(`Imported ${result.imported} rows`)
+    previewRows = [];
+    ignoredRows = [];
+    renderPreview();
+    renderIgnored();
+    loadCategories();
+    button.disabled = false;
+};
+
 document.getElementById("preview-btn").onclick = async () => {
     const text = document.getElementById("csv-text").value;
     const res = await fetch("/transactions/preview", {
@@ -54,6 +101,9 @@ document.getElementById("preview-btn").onclick = async () => {
     });
     const data = await res.json();
     previewRows = data.rows;
+    previewRows.forEach((row) => {
+        row.origionalDescription = row.description; // saves the original description
+    });
     ignoredRows = data.ignored;
     renderPreview();
     renderIgnored();

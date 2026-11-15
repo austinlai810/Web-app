@@ -128,9 +128,12 @@ def preview_transactions(request: ImportRequest, db: Session = Depends(get_db)):
     rows = []
     ignored = []
     rules = {r.description: r for r in db.query(CategoryRuleDB).all()}
+    existing = {(e.date, e.description, e.amount) for e in db.query(TransactionDB)}
+
     for row in csv.DictReader(io.StringIO(request.text)):
         date_value = datetime.datetime.strptime(row["Transaction Date"], "%m/%d/%Y").date()
         amount = float(row["Amount"])
+        in_database = (date_value, row["Description"], amount) in existing 
         rule = rules.get(row["Description"])
         if rule and rule.category.lower() == "ignore": 
             ignored.append({
@@ -156,6 +159,7 @@ def preview_transactions(request: ImportRequest, db: Session = Depends(get_db)):
             "direction": direction,
             "category": category,
             "subcategory": subcategory,
+            "in_database": in_database
         })
     return {"rows": rows, "ignored": ignored}
 

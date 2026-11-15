@@ -173,3 +173,9 @@ button {
 .transactions-table .delete-row-btn {
   margin-top: 0;
 }
+
+/* .datatable then looking for a table cell (td or table data) in the row marked as duplicate then itll mark it red */
+
+.transactions-table tr.duplicate td {
+  background: #ffd6d6;
+}
