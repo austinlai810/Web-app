@@ -101,7 +101,7 @@ document.getElementById("preview-btn").onclick = async () => {
     if (previewRows.length == 0) { 
         return;
     }
-    if (document.querySelectorAll("#preview-rows tr.duplicate")) {
+    if (document.querySelectorAll("#preview-rows tr.duplicate").length > 0) {
         alert(`Duplicates found, please fix them before importing`);
         return;
     }
