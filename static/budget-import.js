@@ -24,9 +24,18 @@ function renderPreview() {
   tbody.innerHTML = "";
   previewRows.forEach((row) => {
     const tr = document.createElement("tr");
-    ["date", "description", "amount", "direction", "category", "subcategory"].forEach((field) => {
+    ["select","date", "description", "amount", "direction", "category", "subcategory"].forEach((field) => {
         const td = document.createElement("td");
-        if (field === "category" || field === "subcategory") { 
+        if (field === "select") {
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = Boolean(row.selected);
+            checkbox.onchange = () => {
+                row.selected = checkbox.checked;
+            }
+            td.appendChild(checkbox);
+        }
+        else if (field === "category" || field === "subcategory") { 
             const input = document.createElement("input");
             if (field === "category") {
                 input.setAttribute("list", "category-options");
@@ -71,8 +80,29 @@ function renderIgnored() {
     });
 }
 
-document.getElementById("confirm-btn").onclick = async () => {
+document.getElementById("preview-btn").onclick = async () => {
+    const text = document.getElementById("csv-text").value;
+    const res = await fetch("/transactions/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: text }),
+    });
+    const data = await res.json();
+    previewRows = data.rows;
+    previewRows.forEach((row) => {
+        row.origionalDescription = row.description; // saves the original description
+    });
+    ignoredRows = data.ignored;
+    renderPreview();
+    renderIgnored();
+  };
+
+  document.getElementById("confirm-btn").onclick = async () => {
     if (previewRows.length == 0) { 
+        return;
+    }
+    if (document.querySelectorAll("#preview-rows tr.duplicate")) {
+        alert(`Duplicates found, please fix them before importing`);
         return;
     }
     const button = document.getElementById("confirm-btn")
@@ -92,21 +122,16 @@ document.getElementById("confirm-btn").onclick = async () => {
     button.disabled = false;
 };
 
-document.getElementById("preview-btn").onclick = async () => {
-    const text = document.getElementById("csv-text").value;
-    const res = await fetch("/transactions/preview", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: text }),
-    });
-    const data = await res.json();
-    previewRows = data.rows;
-    previewRows.forEach((row) => {
-        row.origionalDescription = row.description; // saves the original description
-    });
-    ignoredRows = data.ignored;
+document.getElementById("clear-table-btn").onclick = () => {
+    previewRows = [];
+    ignoredRows = [];
     renderPreview();
     renderIgnored();
+};
+
+document.getElementById("delete-selected-btn").onclick = () => {
+    previewRows = previewRows.filter((row) => !row.selected);  //rereders it without(!) the selected rows
+    renderPreview();
   };
 
   async function loadCategories() {
