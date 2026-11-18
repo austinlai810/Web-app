@@ -80,6 +80,16 @@ function renderIgnored() {
     });
 }
 
+document.getElementById("csv-file").onchange = async () => {
+    const file = document.getElementById("csv-file").files[0];
+    if (!file) {
+        return;
+    }
+    const contents = await file.text();
+    document.getElementById("csv-text").value = contents;
+    document.getElementById("preview-btn").click();
+};
+
 document.getElementById("preview-btn").onclick = async () => {
     const text = document.getElementById("csv-text").value;
     const res = await fetch("/transactions/preview", {
@@ -103,6 +113,15 @@ document.getElementById("preview-btn").onclick = async () => {
     }
     if (document.querySelectorAll("#preview-rows tr.duplicate").length > 0) {
         alert(`Duplicates found, please fix them before importing`);
+        return;
+    }
+    const incompleteRows = previewRows.some((row) => {  // .some makes it so if any (either category or subcategory) is empty, it returns true
+        const noCategory = row.category.trim() === "";
+        const noSubcategory = row.subcategory.trim() === "" && row.category.toLowerCase() !== "ignore";
+        return noCategory || noSubcategory;
+    });
+    if (incompleteRows) {
+        alert("Please fill in all categories and subcategories.");
         return;
     }
     const button = document.getElementById("confirm-btn")
